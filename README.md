@@ -2,15 +2,17 @@
 
 Цей проєкт — простий REST API для роботи з контактами на Node.js.
 
+![Приклад бази даних](./contacts.png "Контакти")
+
 ## Основні можливості
 
-- Зберігання контактів у файлі `db/contacts.json`
 - CRUD-операції через REST API:
   - **GET /api/contacts** — отримати всі контакти
   - **GET /api/contacts/:id** — отримати контакт за id
   - **POST /api/contacts** — створити новий контакт (поля: name, email, phone)
   - **PUT /api/contacts/:id** — оновити контакт (можна будь-яке з полів)
   - **DELETE /api/contacts/:id** — видалити контакт
+  - **PATCH /api/contacts/:id/favorite** — оновити статус favorite контакту
 
 ## Валідація
 
