@@ -1,5 +1,10 @@
 import Contact from "../db/Contacts.js";
-import { createContactSchema, updateContactSchema, updateFavoriteSchema } from "../schemas/contactsSchemas.js";
+import User from "../db/Users.js";
+import {
+  createContactSchema,
+  updateContactSchema,
+  updateFavoriteSchema,
+} from "../schemas/contactsSchemas.js";
 import HttpError from "../helpers/HttpError.js";
 import controllerWrapper from "../helpers/controllerWrapper.js";
 
@@ -74,10 +79,10 @@ const updateStatusContact = async (req, res) => {
 };
 
 export default {
-    getAllContacts: controllerWrapper(getAllContacts),
-    getOneContact: controllerWrapper(getOneContact),
-    deleteContact: controllerWrapper(deleteContact),
-    createContact: controllerWrapper(createContact),
-    updateContact: controllerWrapper(updateContact),
-    updateStatusContact: controllerWrapper(updateStatusContact),
-}
+  getAllContacts: controllerWrapper(getAllContacts),
+  getOneContact: controllerWrapper(getOneContact),
+  deleteContact: controllerWrapper(deleteContact),
+  createContact: controllerWrapper(createContact),
+  updateContact: controllerWrapper(updateContact),
+  updateStatusContact: controllerWrapper(updateStatusContact),
+};
