@@ -14,6 +14,13 @@
   - **DELETE /api/contacts/:id** — видалити контакт
   - **PATCH /api/contacts/:id/favorite** — оновити статус favorite контакту
 
+- **PATCH /api/contacts/:id/favorite** — оновити статус favorite контакту
+
+## Автентифікація
+
+- **POST /api/auth/register** — реєстрація нового користувача (поля: email, password)
+- **POST /api/auth/login** — логін існуючого користувача (поля: email, password)
+
 ## Валідація
 
 - Використовується [Joi](https://joi.dev/) для перевірки даних при створенні та оновленні контакту.
