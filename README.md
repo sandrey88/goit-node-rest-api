@@ -2,12 +2,14 @@
 
 Цей проєкт — простий REST API для роботи з контактами на Node.js.
 
-![Приклад бази даних](./contacts.png "Контакти")
+![Приклад бази користувачів](./users.png "Користувачі")
+![Приклад бази контактів](./contacts.png "Контакти")
 
 ## Основні можливості
 
 - CRUD-операції через REST API:
-  - **GET /api/contacts** — отримати всі контакти
+
+  - **GET /api/contacts** — отримати всі контакти (потрібен `Authorization` заголовок)
   - **GET /api/contacts/:id** — отримати контакт за id
   - **POST /api/contacts** — створити новий контакт (поля: name, email, phone)
   - **PUT /api/contacts/:id** — оновити контакт (можна будь-яке з полів)
@@ -20,6 +22,8 @@
 
 - **POST /api/auth/register** — реєстрація нового користувача (поля: email, password)
 - **POST /api/auth/login** — логін існуючого користувача (поля: email, password)
+- **POST /api/auth/logout** — логаут (потрібен `Authorization` заголовок)
+- **GET /api/auth/current** — отримання даних поточного користувача (потрібен `Authorization` заголовок)
 
 ## Валідація
 

@@ -1,18 +1,21 @@
 import express from "express";
+import authenticate from "../middleware/authenticate.js";
 import contactsController from "../controllers/contactsControllers.js";
 
-const contactsRouter = express.Router();
+const router = express.Router();
 
-contactsRouter.get("/", contactsController.getAllContacts);
+router.use(authenticate);
 
-contactsRouter.get("/:id", contactsController.getOneContact);
+router.get("/", contactsController.getAllContacts);
 
-contactsRouter.delete("/:id", contactsController.deleteContact);
+router.get("/:id", contactsController.getOneContact);
 
-contactsRouter.post("/", contactsController.createContact);
+router.delete("/:id", contactsController.deleteContact);
 
-contactsRouter.put("/:id", contactsController.updateContact);
+router.post("/", contactsController.createContact);
 
-contactsRouter.patch("/:id/favorite", contactsController.updateStatusContact);
+router.put("/:id", contactsController.updateContact);
 
-export default contactsRouter;
+router.patch("/:id/favorite", contactsController.updateStatusContact);
+
+export default router;

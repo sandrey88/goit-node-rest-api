@@ -69,7 +69,23 @@ const login = async (req, res) => {
   });
 };
 
+const logout = async (req, res) => {
+  const { id } = req.user;
+  await User.update({ token: null }, { where: { id } });
+  res.status(204).send();
+};
+
+const getCurrent = async (req, res) => {
+  const { email, subscription } = req.user;
+  res.json({
+    email,
+    subscription,
+  });
+};
+
 export default {
   register: controllerWrapper(register),
   login: controllerWrapper(login),
+  logout: controllerWrapper(logout),
+  getCurrent: controllerWrapper(getCurrent),
 };
