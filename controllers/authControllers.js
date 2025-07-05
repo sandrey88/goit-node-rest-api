@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import gravatar from "gravatar";
 import User from "../db/Users.js";
 import { registerSchema, loginSchema } from "../schemas/authSchemas.js";
 import HttpError from "../helpers/HttpError.js";
@@ -22,15 +23,18 @@ const register = async (req, res) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  const avatarURL = gravatar.url(email);
   const newUser = await User.create({
     email,
     password: hashedPassword,
+    avatarURL,
   });
 
   res.status(201).json({
     user: {
       email: newUser.email,
       subscription: newUser.subscription,
+      avatarURL: newUser.avatarURL,
     },
   });
 };
