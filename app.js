@@ -2,6 +2,8 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import "dotenv/config";
+import path from "path";
+import fs from "fs/promises";
 import contactsRouter from "./routes/contactsRouter.js";
 import authRouter from "./routes/authRouter.js";
 
@@ -26,6 +28,14 @@ app.use((err, req, res, next) => {
 
 const port = process.env.PORT || 3000;
 
-app.listen(port, () => {
+app.listen(port, async () => {
+  // Створюємо папку temp, якщо вона не існує
+  const tempDir = path.resolve("temp");
+  try {
+    await fs.mkdir(tempDir, { recursive: true });
+  } catch (error) {
+    console.error("Error creating temp directory:", error);
+    process.exit(1);
+  }
   console.log(`Server is running. Use our API on port: ${port}`);
 });

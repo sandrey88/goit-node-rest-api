@@ -5,6 +5,10 @@ import User from "../db/Users.js";
 import { registerSchema, loginSchema } from "../schemas/authSchemas.js";
 import HttpError from "../helpers/HttpError.js";
 import controllerWrapper from "../helpers/controllerWrapper.js";
+import path from "path";
+import fs from "fs/promises";
+
+const avatarsDir = path.resolve("public", "avatars");
 
 const { JWT_SECRET } = process.env;
 
@@ -87,9 +91,33 @@ const getCurrent = async (req, res) => {
   });
 };
 
+const updateAvatar = async (req, res) => {
+  const { id } = req.user;
+  const { path: tempUpload, originalname } = req.file;
+
+  // Створюємо унікальне ім'я файлу на основі ID користувача та оригінальної назви
+  const filename = `${id}-${originalname}`;
+  const resultUpload = path.join(avatarsDir, filename);
+
+  // Перевіряємо, чи існує папка, і створюємо її, якщо ні
+  try {
+    await fs.access(avatarsDir);
+  } catch {
+    await fs.mkdir(avatarsDir, { recursive: true });
+  }
+
+  await fs.rename(tempUpload, resultUpload);
+
+  const avatarURL = path.join("avatars", filename);
+  await User.update({ avatarURL }, { where: { id } });
+
+  res.json({ avatarURL });
+};
+
 export default {
   register: controllerWrapper(register),
   login: controllerWrapper(login),
   logout: controllerWrapper(logout),
   getCurrent: controllerWrapper(getCurrent),
+  updateAvatar: controllerWrapper(updateAvatar),
 };

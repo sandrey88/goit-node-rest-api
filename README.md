@@ -22,6 +22,7 @@
 - **POST /api/auth/login** — логін існуючого користувача (поля: email, password)
 - **POST /api/auth/logout** — логаут (потрібен `Authorization` заголовок)
 - **GET /api/auth/current** — отримання даних поточного користувача (потрібен `Authorization` заголовок)
+- **PATCH /api/auth/avatars** — оновлення аватара користувача (потрібен `Authorization` заголовок та `multipart/form-data`)
 
 ## Валідація
 
