@@ -4,7 +4,7 @@ import gravatar from "gravatar";
 import { v4 as uuidv4 } from "uuid";
 import User from "../db/Users.js";
 import sendMail from "../helpers/sendMail.js";
-import { registerSchema, loginSchema } from "../schemas/authSchemas.js";
+import { registerSchema, loginSchema, resendVerifySchema } from "../schemas/authSchemas.js";
 import HttpError from "../helpers/HttpError.js";
 import controllerWrapper from "../helpers/controllerWrapper.js";
 import path from "path";
@@ -151,6 +151,36 @@ const verifyEmail = async (req, res) => {
   });
 };
 
+const resendVerifyEmail = async (req, res) => {
+  const { error } = resendVerifySchema.validate(req.body);
+  if (error) {
+    throw HttpError(400, error.message);
+  }
+
+  const { email } = req.body;
+  const user = await User.findOne({ where: { email } });
+
+  if (!user) {
+    throw HttpError(404, "User not found");
+  }
+
+  if (user.verify) {
+    throw HttpError(400, "Verification has already been passed");
+  }
+
+  const verificationEmail = {
+    to: email,
+    subject: "Verify your email address",
+    html: `To verify your email, please click on this <a href="${APP_DOMAIN}/api/auth/verify/${user.verificationToken}">link</a>`,
+  };
+
+  await sendMail(verificationEmail);
+
+  res.json({
+    message: "Verification email sent",
+  });
+};
+
 export default {
   register: controllerWrapper(register),
   login: controllerWrapper(login),
@@ -158,4 +188,5 @@ export default {
   getCurrent: controllerWrapper(getCurrent),
   updateAvatar: controllerWrapper(updateAvatar),
   verifyEmail: controllerWrapper(verifyEmail),
+  resendVerifyEmail: controllerWrapper(resendVerifyEmail),
 };

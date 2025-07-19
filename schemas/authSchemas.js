@@ -6,6 +6,12 @@ export const registerSchema = Joi.object({
 });
 
 export const loginSchema = Joi.object({
-  email: Joi.string().email().required(),
-  password: Joi.string().min(6).required(),
+  email: Joi.string().required(),
+  password: Joi.string().required(),
+});
+
+export const resendVerifySchema = Joi.object({
+  email: Joi.string().email().required().messages({
+    'any.required': 'missing required field email',
+  }),
 });

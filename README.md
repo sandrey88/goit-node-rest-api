@@ -23,6 +23,8 @@
 - **POST /api/auth/logout** — логаут (потрібен `Authorization` заголовок)
 - **GET /api/auth/current** — отримання даних поточного користувача (потрібен `Authorization` заголовок)
 - **PATCH /api/auth/avatars** — оновлення аватара користувача (потрібен `Authorization` заголовок та `multipart/form-data`)
+- **GET /api/auth/verify/:verificationToken** — верифікація пошти, перехід по посиланню з листа
+- **POST /api/auth/verify** — повторна відправка листа для верифікації (потрібно передати `email` в тілі запиту)
 
 ## Валідація
 
