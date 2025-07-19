@@ -1,7 +1,9 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import gravatar from "gravatar";
+import { v4 as uuidv4 } from "uuid";
 import User from "../db/Users.js";
+import sendMail from "../helpers/sendMail.js";
 import { registerSchema, loginSchema } from "../schemas/authSchemas.js";
 import HttpError from "../helpers/HttpError.js";
 import controllerWrapper from "../helpers/controllerWrapper.js";
@@ -11,6 +13,8 @@ import fs from "fs/promises";
 const avatarsDir = path.resolve("public", "avatars");
 
 const { JWT_SECRET } = process.env;
+
+const { APP_DOMAIN } = process.env;
 
 const register = async (req, res) => {
   const { error } = registerSchema.validate(req.body);
@@ -28,11 +32,22 @@ const register = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const avatarURL = gravatar.url(email);
+  const verificationToken = uuidv4();
+
   const newUser = await User.create({
     email,
     password: hashedPassword,
     avatarURL,
+    verificationToken,
   });
+
+  const verificationEmail = {
+    to: email,
+    subject: "Verify your email address",
+    html: `To verify your email, please click on this <a href="${APP_DOMAIN}/api/auth/verify/${verificationToken}">link</a>`,
+  };
+
+  await sendMail(verificationEmail);
 
   res.status(201).json({
     user: {
@@ -53,7 +68,11 @@ const login = async (req, res) => {
   const user = await User.findOne({ where: { email } });
 
   if (!user) {
-    throw HttpError(401, "Email or password is wrong");
+    throw HttpError(401, "Email or password invalid");
+  }
+
+  if (!user.verify) {
+    throw HttpError(401, "Email not verified");
   }
 
   const passwordCompare = await bcrypt.compare(password, user.password);
@@ -114,10 +133,29 @@ const updateAvatar = async (req, res) => {
   res.json({ avatarURL });
 };
 
+const verifyEmail = async (req, res) => {
+  const { verificationToken } = req.params;
+  const user = await User.findOne({ where: { verificationToken } });
+
+  if (!user) {
+    throw HttpError(404, "User not found");
+  }
+
+  await User.update(
+    { verify: true, verificationToken: null },
+    { where: { id: user.id } }
+  );
+
+  res.status(200).json({
+    message: "Verification successful",
+  });
+};
+
 export default {
   register: controllerWrapper(register),
   login: controllerWrapper(login),
   logout: controllerWrapper(logout),
   getCurrent: controllerWrapper(getCurrent),
   updateAvatar: controllerWrapper(updateAvatar),
+  verifyEmail: controllerWrapper(verifyEmail),
 };
